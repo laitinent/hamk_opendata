@@ -14,10 +14,10 @@ import java.util.List;
  * Created by tlaitinen on 5.12.2016.
  */
 
-public class RealizationsAdapter extends ArrayAdapter<Realization>{
+public class ReservationsAdapter extends ArrayAdapter<Reservation>{
 
 
-    public RealizationsAdapter(Context context, List<Realization> users) {
+    public ReservationsAdapter(Context context, List<Reservation> users) {
         super(context, 0, users);
     }
 
@@ -26,7 +26,7 @@ public class RealizationsAdapter extends ArrayAdapter<Realization>{
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         // Get the data item for this position
-        Realization user = getItem(position);
+        Reservation user = getItem(position);
         // Check if an existing view is being reused, otherwise inflate the view
 
         if (convertView == null) {
@@ -38,14 +38,8 @@ public class RealizationsAdapter extends ArrayAdapter<Realization>{
         TextView tvHome = (TextView) convertView.findViewById(R.id.tvHome);
 
         // Populate the data into the template view using the data object
-        tvHome.setText(user.getStartDate());
-        String s="";
-        if(user.getName().length()>=30)
-            s=user.getName().substring(0,30);
-        else
-            s=user.getName();
-        tvName.setText(s);
-
+        tvName.setText(user.getStartDate());
+        tvHome.setText(user.getSubject());
 
         // Return the completed view to render on screen
         return convertView;

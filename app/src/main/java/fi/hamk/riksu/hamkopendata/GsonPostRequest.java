@@ -39,7 +39,7 @@ public class GsonPostRequest<T> extends Request<T> {
     private final Class<T> clazz;
     private final Map<String, String> headers;
     private final Response.Listener<T> listener;
-    JSONObject jsonBody = new JSONObject();
+    //JSONObject jsonBody = new JSONObject();
     String mRequestBody;
 
 
@@ -48,23 +48,22 @@ public class GsonPostRequest<T> extends Request<T> {
      *
      * @param url URL of the request to make
      * @param clazz Relevant class object, for Gson's reflection
-     * @param headers Map of request headers
+     //* @param headers Map of request headers
+     * @param jsonBody JSONObject of request
      */
-    public GsonPostRequest(String url, Class<T> clazz, Map<String, String> headers,
+    public GsonPostRequest(String url, Class<T> clazz, JSONObject jsonBody/*Map<String, String> headers*/,
                        Response.Listener<T> listener, Response.ErrorListener errorListener) {
         super(Method.POST, url, errorListener);
         this.clazz = clazz;
-        this.headers = headers;
+        this.headers = null;//headers;
         this.listener = listener;
 
-        try {
-            jsonBody.put("endDate", "2016-12-31T00:30");
-
+//        try
+        {
+//            jsonBody.put("endDate", "2016-12-31T00:30");
             mRequestBody = jsonBody.toString();
         }
-        catch(JSONException ex){
-            System.err.println(ex.getMessage());
-        }
+        //catch(JSONException ex){            System.err.println(ex.getMessage());        }
     }
 
     @Override
