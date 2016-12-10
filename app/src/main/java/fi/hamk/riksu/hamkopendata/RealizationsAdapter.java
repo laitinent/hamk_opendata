@@ -8,6 +8,10 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
 import java.util.List;
 
 /**
@@ -38,7 +42,11 @@ public class RealizationsAdapter extends ArrayAdapter<Realization>{
         TextView tvHome = (TextView) convertView.findViewById(R.id.tvHome);
 
         // Populate the data into the template view using the data object
-        tvHome.setText(user.getStartDate());
+        DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm");
+        DateTimeFormatter outfmt = DateTimeFormat.forPattern("dd.MM.yy");
+        DateTime startDate = fmt.parseDateTime(user.getStartDate());
+
+        tvHome.setText(startDate.toString(outfmt));
         String s="";
         if(user.getName().length()>=30)
             s=user.getName().substring(0,30);

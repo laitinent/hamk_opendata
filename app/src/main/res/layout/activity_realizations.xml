@@ -12,10 +12,22 @@
 
     <ListView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
+        android:layout_height="wrap_content"
+        android:id="@+id/lvRealizations"
         android:layout_alignParentStart="true"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="19dp"
-        android:id="@+id/lvRealizations" />
+        android:layout_marginBottom="50dp" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="INTINU14A6"
+        android:ems="10"
+        android:id="@+id/etGroup"
+        android:inputType="textCapCharacters"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:autoText="false"
+        android:singleLine="true"
+        android:selectAllOnFocus="true"
+        android:textSize="16sp" />
 </RelativeLayout>
