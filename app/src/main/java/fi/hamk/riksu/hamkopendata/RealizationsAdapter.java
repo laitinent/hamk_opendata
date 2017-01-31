@@ -12,6 +12,7 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 /**
@@ -48,10 +49,16 @@ public class RealizationsAdapter extends ArrayAdapter<Realization>{
 
         tvHome.setText(startDate.toString(outfmt));
         String s="";
-        if(user.getName().length()>=30)
-            s=user.getName().substring(0,30);
-        else
-            s=user.getName();
+        try {
+            String name = new String(user.getName().getBytes("ISO-8859-1"), "UTF-8");
+            if(name.length()>=30)
+                s=name.substring(0,30);
+            else
+                s=name;
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
         tvName.setText(s);
 
 
