@@ -12,6 +12,7 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 /**
@@ -47,7 +48,13 @@ public class ReservationsAdapter extends ArrayAdapter<Reservation>{
         DateTime startDate = fmt.parseDateTime(user.getStartDate());
 
         tvHome.setText(startDate.toString(outfmt));
-        tvName.setText(user.getSubject().length()>30? user.getSubject().substring(0,30) : user.getSubject());
+        try {
+            String subject = new String(user.getSubject().getBytes("ISO-8859-1"), "UTF-8");
+            tvName.setText(subject.length()>30? subject.substring(0,30) : subject);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
 
         // Return the completed view to render on screen
         return convertView;

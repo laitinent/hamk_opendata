@@ -6,9 +6,15 @@ import org.joda.time.format.DateTimeFormatter;
 
 /**
  * Created by tlaitinen on 9.12.2016.
+ * @desc Custom helper functions and constants
  */
 
 public class OpendataHelper {
+    private static String URL_BASE = "https://opendata.hamk.fi:8443/r1/";
+    public static String RESERVATIONS_ALL_URL = URL_BASE+"reservation/building";
+    public static String RESERVATIONS_URL = URL_BASE+"reservation/search";
+    public static String REALIZATIONS_URL = URL_BASE+"realization/search";
+    public static String CURRICULUMS_URL = URL_BASE+"curriculum/search";
     /**
      * Get current date as string
      * @param days days to add to current
