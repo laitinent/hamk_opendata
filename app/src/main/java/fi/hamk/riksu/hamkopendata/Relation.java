@@ -2,7 +2,10 @@
 package fi.hamk.riksu.hamkopendata;
 
 
-public class Relation {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class Relation {  //implements Parcelable {
 
     private String id;
     private String level;
@@ -80,5 +83,32 @@ public class Relation {
     public void setLearningUnit(LearningUnit learningUnit) {
         this.learningUnit = learningUnit;
     }
+/*
+    @Override
+    public int describeContents() {
+        return 0;
+    }
 
-}
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeParcelable(getLearningUnit(),i);
+
+    }
+
+    public final Parcelable.Creator<Relation> CREATOR = new Parcelable.Creator<Relation>() {
+        @Override
+        public Relation createFromParcel(Parcel source) {
+
+            return new Relation(source);
+        }
+
+        @Override
+        public Relation[] newArray(int size) {
+            return new Relation[size];
+        }
+    };
+
+    public Relation(Parcel data) {
+        setLearningUnit(data.readParcelable());
+    }*/
+    }

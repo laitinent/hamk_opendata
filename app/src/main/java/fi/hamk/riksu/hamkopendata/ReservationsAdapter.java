@@ -55,7 +55,6 @@ public class ReservationsAdapter extends ArrayAdapter<Reservation>{
             e.printStackTrace();
         }
 
-
         // Return the completed view to render on screen
         return convertView;
     }

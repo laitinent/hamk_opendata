@@ -20,7 +20,8 @@
         <activity android:name=".SingleListItem" />
         <activity android:name=".ReservationsActivity" />
         <activity android:name=".RealizationsActivity" />
-        <activity android:name=".CurriculumsActivity"></activity>
+        <activity android:name=".CurriculumsActivity" />
+        <activity android:name=".ProgrammeActivity"></activity>
     </application>
 
 </manifest>

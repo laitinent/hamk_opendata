@@ -1,7 +1,6 @@
 package fi.hamk.riksu.hamkopendata;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,22 +11,21 @@ import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 /**
- * Created by tlaitinen on 5.12.2016.
+ * Created by tlaitinen on 9.2.2017.
  */
 
-public class CurriculumsAdapter extends ArrayAdapter<Programme>{
+public class RelationAdapter extends ArrayAdapter<Relation> {
 
 
-    public CurriculumsAdapter(Context context, List<Programme> users) {
-        super(context, 0, users);
+    public RelationAdapter(Context context, List<Relation> objects) {
+        super(context, 0, objects);
     }
 
-
-    @NonNull
     @Override
+
     public View getView(int position, View convertView, ViewGroup parent) {
         // Get the data item for this position
-        Programme programme = getItem(position);
+        Relation relation = getItem(position);
         // Check if an existing view is being reused, otherwise inflate the view
 
         if (convertView == null) {
@@ -39,15 +37,13 @@ public class CurriculumsAdapter extends ArrayAdapter<Programme>{
         TextView tvHome = (TextView) convertView.findViewById(R.id.tvHome);
 
         // Populate the data into the template view using the data object
-        String name = null;
         try {
-            name = new String(programme.getName().getBytes("ISO-8859-1"), "UTF-8");
-            tvHome.setText(name);
+            String name = new String(relation.getLearningUnit().getName().getBytes("ISO-8859-1"), "UTF-8");
+            tvName.setText(name);
+            tvHome.setText(relation.getLearningUnit().getType());
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        tvName.setText(programme.getCode());
-
 
         // Return the completed view to render on screen
         return convertView;

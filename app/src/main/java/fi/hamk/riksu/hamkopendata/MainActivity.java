@@ -24,7 +24,7 @@ import fi.hamk.riksu.hamkopendata.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
     UsersAdapter itemsAdapter;
-    //TextView mTxtDisplay;
+
     ActivityMainBinding binding;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,16 +32,6 @@ public class MainActivity extends AppCompatActivity {
         //setContentView(R.layout.activity_main);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
-        /*
-        final Button button,button_real,button_res,button_cur;
-        final ListView listView;
-        mTxtDisplay = (TextView) findViewById(R.id.textView);
-        button = (Button) findViewById(R.id.button);
-        button_res = (Button) findViewById(R.id.button2);
-        button_real = (Button) findViewById(R.id.button3);
-        button_cur = (Button) findViewById(R.id.button4);
-        listView = (ListView)findViewById(R.id.listView);
-        */
         String url = OpendataHelper.RESERVATIONS_ALL_URL;// "https://opendata.hamk.fi:8443/r1/reservation/building";
         binding.textView.setText("V"+BuildConfig.VERSION_NAME);
 
@@ -49,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
                 new Response.Listener<Buildings>() {
                     @Override
                     public void onResponse(Buildings response) {
-                        //mTxtDisplay.setText("Response: " + response.getResources().get(0).getName());
+
                         itemsAdapter =new UsersAdapter(MainActivity.this, response.getResources());
                         binding.listView.setAdapter(itemsAdapter);
                     }
@@ -98,7 +88,6 @@ public class MainActivity extends AppCompatActivity {
         binding.listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                //String item = ((TextView)view).getText().toString();
                 Intent intent = new Intent(getApplicationContext(), SingleListItem.class);
                 // sending data to new activity
 

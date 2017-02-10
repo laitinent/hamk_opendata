@@ -2,7 +2,10 @@
 package fi.hamk.riksu.hamkopendata;
 
 
-public class LearningUnit {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class LearningUnit implements Parcelable {
 
     private String id;
     private String code;
@@ -138,4 +141,14 @@ public class LearningUnit {
         this.luOptionality = luOptionality;
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(getName());
+        parcel.writeString(getType());
+    }
 }

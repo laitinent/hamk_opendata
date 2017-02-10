@@ -41,14 +41,6 @@
         android:layout_toStartOf="@+id/button" />
 
     <Button
-        android:text="Totsut"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/button_real"
-        android:layout_below="@+id/listView"
-        android:layout_alignParentStart="true" />
-
-    <Button
         android:text="OPS"
         android:layout_width="60dp"
         android:layout_height="wrap_content"
@@ -56,6 +48,14 @@
         android:layout_alignBaseline="@+id/button_real"
         android:layout_alignBottom="@+id/button_real"
         android:layout_toStartOf="@+id/button_real" />
+
+    <Button
+        android:text="Totsut"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/button_real"
+        android:layout_below="@+id/listView"
+        android:layout_toStartOf="@+id/button_res" />
 
 </RelativeLayout>
 </layout>
