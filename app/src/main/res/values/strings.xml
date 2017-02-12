@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">HAMK Opendata</string>
+    <string name="txtCurrButton">Hae</string>
 </resources>

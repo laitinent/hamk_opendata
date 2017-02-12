@@ -66,6 +66,11 @@ public class GsonPostRequest<T> extends Request<T> {
         //catch(JSONException ex){            System.err.println(ex.getMessage());        }
     }
 
+    public void setBody(JSONObject jsonBody)
+    {
+        mRequestBody = jsonBody.toString();
+    }
+
     @Override
     public byte[] getBody() throws AuthFailureError {
         try {

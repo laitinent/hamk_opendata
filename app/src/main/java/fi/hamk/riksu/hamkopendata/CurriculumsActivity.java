@@ -20,39 +20,42 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import fi.hamk.riksu.hamkopendata.databinding.ActivityReservationsBinding;
+import fi.hamk.riksu.hamkopendata.databinding.ActivityCurriculumsBinding;
+
 
 public class CurriculumsActivity extends AppCompatActivity {
     RelationAdapter itemsAdapter;
-    ActivityReservationsBinding binding;
+    ActivityCurriculumsBinding binding;
+    JSONObject jsonBody;
+    GsonPostRequest jsObjRequest;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //setContentView(R.layout.activity_reservations);
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_reservations);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_curriculums);
         //final TextView txtProduct = (TextView) findViewById(R.id.textView2);
         //final ListView listView = (ListView)findViewById(R.id.lvCurriculums);
 
 
-        String url = OpendataHelper.CURRICULUMS_URL;//"https://opendata.hamk.fi:8443/r1/curriculum/search";
+        final String url = OpendataHelper.CURRICULUMS_URL;//"https://opendata.hamk.fi:8443/r1/curriculum/search";
 
         // Search criteria
-        JSONObject jsonBody = new JSONObject();
-        JSONArray jsonArray = new JSONArray();
-        jsonArray.put("INTIA15A");
-        try {
-            jsonBody.put("codes",jsonArray);// "[INTIA15A]");
-        }
-        catch (JSONException ex){System.err.println(ex.getMessage());}
+        jsonBody = new JSONObject();
+        //JSONArray jsonArray = new JSONArray(); jsonArray.put("INTIA15A");
 
-        final GsonPostRequest jsObjRequest = new GsonPostRequest<>(url, Curriculums.class, jsonBody,
+        jsObjRequest = new GsonPostRequest<>(url, Curriculums.class, jsonBody,
                 new Response.Listener<Curriculums>() {
                     @Override
                     public void onResponse(Curriculums response) {
                         //txtProduct.setText("Response: "+response.getResources().get(0).getName());
                         // was CurriculumsAdapter
-                        itemsAdapter =new RelationAdapter(CurriculumsActivity.this, response.getProgrammes().get(0).getStructureViews().get(0).getRelations());
-                        binding.lvReservations.setAdapter(itemsAdapter);
+                        if(response.getProgrammes()!=null && response.getProgrammes().get(0).getStructureViews().size()>0 ) {
+                            itemsAdapter = new RelationAdapter(CurriculumsActivity.this, response.getProgrammes().get(0).getStructureViews().get(0).getRelations());
+
+                            binding.lvCurriculums.setAdapter(itemsAdapter);
+                        }
                     }
                 },
 
@@ -63,6 +66,7 @@ public class CurriculumsActivity extends AppCompatActivity {
                         Toast.makeText(CurriculumsActivity.this,"Virhe: "+error.getMessage(),Toast.LENGTH_LONG).show();
                     }
                 });
+
 /*
         binding.lvReservations.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -76,6 +80,19 @@ public class CurriculumsActivity extends AppCompatActivity {
             }
         });
 */
-        MySingleton.getInstance(CurriculumsActivity.this).addToRequestQueue(jsObjRequest);
+        binding.button2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try {
+                    //jsonBody.put("codes",jsonArray);// "[INTIA15A]");
+                    jsonBody.put("name",binding.editText.getText().toString());
+                    jsObjRequest.setBody(jsonBody);
+                }
+                catch (JSONException ex){System.err.println(ex.getMessage());}
+
+                MySingleton.getInstance(CurriculumsActivity.this).addToRequestQueue(jsObjRequest);
+            }
+        });
+
     }
 }
