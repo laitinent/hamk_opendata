@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">HAMK Opendata</string>
-    <string name="txtCurrButton">Hae</string>
+    <string name="tBtnGetModules">Moduulit</string>
+    <string name="txtCurrButton">Teemat</string>
 </resources>

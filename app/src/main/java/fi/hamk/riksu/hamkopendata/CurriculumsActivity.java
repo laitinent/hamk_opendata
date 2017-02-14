@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -19,16 +20,28 @@ import org.json.JSONObject;
 
 
 import java.util.ArrayList;
+import java.util.List;
 
 import fi.hamk.riksu.hamkopendata.databinding.ActivityCurriculumsBinding;
 
 
 public class CurriculumsActivity extends AppCompatActivity {
     RelationAdapter itemsAdapter;
+    List<Relation> lsAllRelations = null;
+    ArrayList<Relation> lsRelations = new ArrayList<>();
+
+
     ActivityCurriculumsBinding binding;
     JSONObject jsonBody;
-    GsonPostRequest jsObjRequest;
+    GsonPostRequest jsObjRequest, jsObjRequest2;
 
+    Response.ErrorListener rError_func = new Response.ErrorListener() {
+        @Override
+        public void onErrorResponse(VolleyError error) {
+            System.err.println(error.getMessage());
+            Toast.makeText(CurriculumsActivity.this, "Virhe: " + error.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,29 +64,36 @@ public class CurriculumsActivity extends AppCompatActivity {
                     public void onResponse(Curriculums response) {
                         //txtProduct.setText("Response: "+response.getResources().get(0).getName());
                         // was CurriculumsAdapter
-                        if(response.getProgrammes()!=null && response.getProgrammes().get(0).getStructureViews().size()>0 ) {
-                            itemsAdapter = new RelationAdapter(CurriculumsActivity.this, response.getProgrammes().get(0).getStructureViews().get(0).getRelations());
+                        if (response.getProgrammes() != null && response.getProgrammes().get(0).getStructureViews().size() > 0) {
+                            lsAllRelations = response.getProgrammes().get(0).getStructureViews().get(0).getRelations();
+                            lsRelations.clear();
+                            if (binding.checkBox.isChecked() == true) {
+                                for (Relation r : lsAllRelations) {
+                                    if (r.getLearningUnit().getType().compareTo("STUDY_MODULE")==0) {
+                                        lsRelations.add(r);
+                                    }
+                                }
+                            }
+                            else {
+                                lsRelations.addAll(lsAllRelations);
+                            }
 
+                            itemsAdapter = new RelationAdapter(CurriculumsActivity.this, lsRelations, false);
                             binding.lvCurriculums.setAdapter(itemsAdapter);
                         }
                     }
                 },
+                rError_func
+        );
 
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        System.err.println(error.getMessage());
-                        Toast.makeText(CurriculumsActivity.this,"Virhe: "+error.getMessage(),Toast.LENGTH_LONG).show();
-                    }
-                });
 
+// kun moduulia klikataan?
 /*
         binding.lvReservations.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Intent intent = new Intent(getApplicationContext(), SingleListItem.class);
                 // sending data to new activity
-
                 Programme listItem = (Programme) adapterView.getItemAtPosition(i);
                 intent.putParcelableArrayListExtra("product", (ArrayList<? extends Parcelable>) listItem.getStructureViews().get(0).getRelations());
                 startActivity(intent);
@@ -85,14 +105,21 @@ public class CurriculumsActivity extends AppCompatActivity {
             public void onClick(View view) {
                 try {
                     //jsonBody.put("codes",jsonArray);// "[INTIA15A]");
-                    jsonBody.put("name",binding.editText.getText().toString());
+                    jsonBody.put("name", binding.editText.getText().toString());
                     jsObjRequest.setBody(jsonBody);
+                } catch (JSONException ex) {
+                    System.err.println(ex.getMessage());
                 }
-                catch (JSONException ex){System.err.println(ex.getMessage());}
 
                 MySingleton.getInstance(CurriculumsActivity.this).addToRequestQueue(jsObjRequest);
             }
         });
 
+        binding.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                MySingleton.getInstance(CurriculumsActivity.this).addToRequestQueue(jsObjRequest);
+            }
+        });
     }
 }

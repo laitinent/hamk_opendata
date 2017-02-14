@@ -16,9 +16,16 @@ import java.util.List;
 
 public class RelationAdapter extends ArrayAdapter<Relation> {
 
+    boolean bAllTypes = false;
 
-    public RelationAdapter(Context context, List<Relation> objects) {
+    /**
+     * @param context  Context
+     * @param objects  List of relations
+     * @param bModules Show only modules
+     */
+    public RelationAdapter(Context context, List<Relation> objects, boolean bModules) {
         super(context, 0, objects);
+        bAllTypes = !bModules;
     }
 
     @Override
@@ -31,6 +38,7 @@ public class RelationAdapter extends ArrayAdapter<Relation> {
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_user, parent, false);
         }
+
 
         // Lookup view for data population
         TextView tvName = (TextView) convertView.findViewById(R.id.tvName);
@@ -46,6 +54,9 @@ public class RelationAdapter extends ArrayAdapter<Relation> {
         }
 
         // Return the completed view to render on screen
+
         return convertView;
     }
 }
+
+
