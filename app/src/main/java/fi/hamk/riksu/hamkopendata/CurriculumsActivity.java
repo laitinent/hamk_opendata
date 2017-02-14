@@ -1,23 +1,18 @@
 package fi.hamk.riksu.hamkopendata;
 
-import android.content.Intent;
 import android.databinding.DataBindingUtil;
-import android.os.Parcelable;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.CompoundButton;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,10 +25,11 @@ public class CurriculumsActivity extends AppCompatActivity {
     List<Relation> lsAllRelations = null;
     ArrayList<Relation> lsRelations = new ArrayList<>();
 
-
     ActivityCurriculumsBinding binding;
     JSONObject jsonBody;
-    GsonPostRequest jsObjRequest, jsObjRequest2;
+    GsonPostRequest jsObjRequest;
+
+    String latestName="";
 
     Response.ErrorListener rError_func = new Response.ErrorListener() {
         @Override
@@ -67,9 +63,15 @@ public class CurriculumsActivity extends AppCompatActivity {
                         if (response.getProgrammes() != null && response.getProgrammes().get(0).getStructureViews().size() > 0) {
                             lsAllRelations = response.getProgrammes().get(0).getStructureViews().get(0).getRelations();
                             lsRelations.clear();
-                            if (binding.checkBox.isChecked() == true) {
+                            if (binding.checkBox.isChecked() == true || latestName.compareTo("")!=0) {
+                                String strCompare="";
                                 for (Relation r : lsAllRelations) {
-                                    if (r.getLearningUnit().getType().compareTo("STUDY_MODULE")==0) {
+                                    if (r.getLearningUnit().getType().compareTo("STUDY_MODULE")==0){
+
+                                        lsRelations.add(r);
+                                        strCompare=r.getLearningUnit().getName();
+                                    }
+                                    if(strCompare.compareTo(latestName)==0){
                                         lsRelations.add(r);
                                     }
                                 }
@@ -78,6 +80,7 @@ public class CurriculumsActivity extends AppCompatActivity {
                                 lsRelations.addAll(lsAllRelations);
                             }
 
+                            latestName="";
                             itemsAdapter = new RelationAdapter(CurriculumsActivity.this, lsRelations, false);
                             binding.lvCurriculums.setAdapter(itemsAdapter);
                         }
@@ -88,18 +91,24 @@ public class CurriculumsActivity extends AppCompatActivity {
 
 
 // kun moduulia klikataan?
-/*
-        binding.lvReservations.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+        binding.lvCurriculums.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Intent intent = new Intent(getApplicationContext(), SingleListItem.class);
+
+/*                Intent intent = new Intent(getApplicationContext(), SingleListItem.class);
                 // sending data to new activity
                 Programme listItem = (Programme) adapterView.getItemAtPosition(i);
                 intent.putParcelableArrayListExtra("product", (ArrayList<? extends Parcelable>) listItem.getStructureViews().get(0).getRelations());
-                startActivity(intent);
+                startActivity(intent);*/
+                if (binding.checkBox.isChecked() == true) {
+                    Relation listItem = (Relation) adapterView.getItemAtPosition(i);
+                    latestName = listItem.getLearningUnit().getName();
+                    MySingleton.getInstance(CurriculumsActivity.this).addToRequestQueue(jsObjRequest);
+                }
             }
         });
-*/
+
         binding.button2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
