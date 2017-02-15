@@ -1,7 +1,10 @@
 package fi.hamk.riksu.hamkopendata;
 
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
@@ -19,6 +22,8 @@ import java.util.List;
 
 import fi.hamk.riksu.hamkopendata.databinding.ActivityCurriculumsBinding;
 
+import static fi.hamk.riksu.hamkopendata.OpendataHelper.*;
+
 
 public class CurriculumsActivity extends AppCompatActivity {
     RelationAdapter itemsAdapter;
@@ -28,8 +33,9 @@ public class CurriculumsActivity extends AppCompatActivity {
     ActivityCurriculumsBinding binding;
     JSONObject jsonBody;
     GsonPostRequest jsObjRequest;
+    GsonRequest jsObjRequest2;
 
-    String latestName="";
+    String latestName = "";
 
     Response.ErrorListener rError_func = new Response.ErrorListener() {
         @Override
@@ -63,24 +69,26 @@ public class CurriculumsActivity extends AppCompatActivity {
                         if (response.getProgrammes() != null && response.getProgrammes().get(0).getStructureViews().size() > 0) {
                             lsAllRelations = response.getProgrammes().get(0).getStructureViews().get(0).getRelations();
                             lsRelations.clear();
-                            if (binding.checkBox.isChecked() == true || latestName.compareTo("")!=0) {
-                                String strCompare="";
+                            if (binding.checkBox.isChecked() == true || latestName.compareTo("") != 0) {
+                                String strCompare = "";
                                 for (Relation r : lsAllRelations) {
-                                    if (r.getLearningUnit().getType().compareTo("STUDY_MODULE")==0){
 
+                                    if (r.getLearningUnit().getType().compareTo("STUDY_MODULE") == 0) {
                                         lsRelations.add(r);
-                                        strCompare=r.getLearningUnit().getName();
+                                        strCompare = r.getLearningUnit().getName();
+                                        System.out.println("CM1 "+strCompare);
                                     }
-                                    if(strCompare.compareTo(latestName)==0){
+                                    // show on list also other types after clicked module name
+
+                                    if (strCompare.compareTo(latestName) == 0) {
                                         lsRelations.add(r);
+                                        System.out.println("CM2 "+strCompare);
                                     }
                                 }
-                            }
-                            else {
+                            } else {
                                 lsRelations.addAll(lsAllRelations);
                             }
-
-                            latestName="";
+                            latestName = "";
                             itemsAdapter = new RelationAdapter(CurriculumsActivity.this, lsRelations, false);
                             binding.lvCurriculums.setAdapter(itemsAdapter);
                         }
@@ -95,15 +103,44 @@ public class CurriculumsActivity extends AppCompatActivity {
         binding.lvCurriculums.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
+                final Relation listItem = (Relation) adapterView.getItemAtPosition(i);
+                if (listItem.getLearningUnit().getType().compareTo("STUDY_MODULE") == 0)
+                {
+                    latestName = listItem.getLearningUnit().getName();
+                    System.out.println("L.N."+latestName);
+                }
 /*                Intent intent = new Intent(getApplicationContext(), SingleListItem.class);
                 // sending data to new activity
-                Programme listItem = (Programme) adapterView.getItemAtPosition(i);
                 intent.putParcelableArrayListExtra("product", (ArrayList<? extends Parcelable>) listItem.getStructureViews().get(0).getRelations());
                 startActivity(intent);*/
-                if (binding.checkBox.isChecked() == true) {
-                    Relation listItem = (Relation) adapterView.getItemAtPosition(i);
-                    latestName = listItem.getLearningUnit().getName();
+
+                String url2 = COURSEUNIT_URL + listItem.getLearningUnit().getId();
+                System.out.println(listItem.getId()+", "+listItem.getLearningUnit().getId());
+                jsObjRequest2 = new GsonRequest<>(url2, CourseUnitSearch.class, null,
+                        new Response.Listener<CourseUnitSearch>() {
+                            @Override
+                            public void onResponse(CourseUnitSearch response) {
+
+                                if (listItem.getLearningUnit().getType().compareTo("COURSE_UNIT") == 0)
+                                {
+                                    ShowAlertDialog(response.getCourseUnits().get(0).getContent(),
+                                            response.getCourseUnits().get(0).getName(), CurriculumsActivity.this);
+                                    /*
+                                        Intent intent = new Intent(getApplicationContext(), CourseUnitSearch.class);
+                                        // sending data to new activity
+                                        intent.putExtra("course",url);
+                                        startActivity(intent);
+                                    */
+                                }
+
+                            }
+                        },
+                        rError_func
+                );
+                if (listItem.getLearningUnit().getType().compareTo("STUDY_MODULE") != 0) {
+                    MySingleton.getInstance(CurriculumsActivity.this).addToRequestQueue(jsObjRequest2);
+                }
+                else {
                     MySingleton.getInstance(CurriculumsActivity.this).addToRequestQueue(jsObjRequest);
                 }
             }
@@ -119,8 +156,8 @@ public class CurriculumsActivity extends AppCompatActivity {
                 } catch (JSONException ex) {
                     System.err.println(ex.getMessage());
                 }
-
                 MySingleton.getInstance(CurriculumsActivity.this).addToRequestQueue(jsObjRequest);
+                hideKeyboardFrom(getApplicationContext(),binding.editText);
             }
         });
 
@@ -131,4 +168,6 @@ public class CurriculumsActivity extends AppCompatActivity {
             }
         });
     }
+
+
 }
