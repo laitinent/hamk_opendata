@@ -80,7 +80,7 @@ public class CurriculumsActivity extends AppCompatActivity {
                                     }
                                     // show on list also other types after clicked module name
 
-                                    if (strCompare.compareTo(latestName) == 0) {
+                                    if (strCompare.compareTo(latestName) == 0 && r.getLearningUnit().getType().compareTo("STUDY_MODULE") != 0) {
                                         lsRelations.add(r);
                                         System.out.println("CM2 "+strCompare);
                                     }
@@ -104,27 +104,45 @@ public class CurriculumsActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 final Relation listItem = (Relation) adapterView.getItemAtPosition(i);
-                if (listItem.getLearningUnit().getType().compareTo("STUDY_MODULE") == 0)
+                final LearningUnit lUnit = listItem.getLearningUnit();
+
+                // find previous STUDY_MODULE (next from that has Objective set)
+                int j= i>3? -4: -i;
+
+                for (; j<0; j++) {
+                    System.out.println(j+".");
+                    if(((Relation) adapterView.getItemAtPosition(i+j)).getLearningUnit().getType().compareTo("STUDY_MODULE")==0)
+                        break;
+                }
+
+                // TODO: tarkista vielä pienillä numeroilla, nyt fix= try-catch
+
+                if (lUnit.getType().compareTo("STUDY_MODULE") == 0 &&
+                        latestName.compareTo(lUnit.getName()) != 0)
                 {
-                    latestName = listItem.getLearningUnit().getName();
-                    System.out.println("L.N."+latestName);
+                    System.out.println("L.N."+latestName+"/"+ lUnit.getName()+".");
+                    latestName = lUnit.getName();
                 }
 /*                Intent intent = new Intent(getApplicationContext(), SingleListItem.class);
                 // sending data to new activity
                 intent.putParcelableArrayListExtra("product", (ArrayList<? extends Parcelable>) listItem.getStructureViews().get(0).getRelations());
                 startActivity(intent);*/
 
-                String url2 = COURSEUNIT_URL + listItem.getLearningUnit().getId();
-                System.out.println(listItem.getId()+", "+listItem.getLearningUnit().getId());
+                String url2 = COURSEUNIT_URL + //lUnit.getId();
+                        ((Relation) adapterView.getItemAtPosition(i+j+1)).getLearningUnit().getId();//
+                System.out.println(listItem.getId()+", "+lUnit.getId()+" index="+ (i+j+1)+"/i="+i);
                 jsObjRequest2 = new GsonRequest<>(url2, CourseUnitSearch.class, null,
                         new Response.Listener<CourseUnitSearch>() {
                             @Override
                             public void onResponse(CourseUnitSearch response) {
 
-                                if (listItem.getLearningUnit().getType().compareTo("COURSE_UNIT") == 0)
+                                //if (lUnit.getType().compareTo("COURSE_UNIT") == 0)
                                 {
-                                    ShowAlertDialog(response.getCourseUnits().get(0).getContent(),
-                                            response.getCourseUnits().get(0).getName(), CurriculumsActivity.this);
+                                    try {
+                                        ShowAlertDialog(response.getCourseUnits().get(0).getObjective(),
+                                                response.getCourseUnits().get(0).getName(), CurriculumsActivity.this);
+                                    }
+                                    catch (NullPointerException ex){System.err.println(ex.getMessage());}
                                     /*
                                         Intent intent = new Intent(getApplicationContext(), CourseUnitSearch.class);
                                         // sending data to new activity
@@ -132,13 +150,14 @@ public class CurriculumsActivity extends AppCompatActivity {
                                         startActivity(intent);
                                     */
                                 }
-
                             }
                         },
                         rError_func
                 );
-                if (listItem.getLearningUnit().getType().compareTo("STUDY_MODULE") != 0) {
+                if (lUnit.getType().compareTo("COURSE_UNIT") == 0 || !binding.checkBox.isChecked()) {
+                    // haku courses -liittymästä
                     MySingleton.getInstance(CurriculumsActivity.this).addToRequestQueue(jsObjRequest2);
+                    System.out.println("CR: "+listItem.getLearningUnit().getType());
                 }
                 else {
                     MySingleton.getInstance(CurriculumsActivity.this).addToRequestQueue(jsObjRequest);
@@ -146,6 +165,7 @@ public class CurriculumsActivity extends AppCompatActivity {
             }
         });
 
+        // normaali haku, opiskelijaryhmätunnus editText:stä
         binding.button2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -161,6 +181,7 @@ public class CurriculumsActivity extends AppCompatActivity {
             }
         });
 
+        // hae uudelleen - näyttää vain moduulit, jos rasti ruudussa
         binding.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
@@ -168,6 +189,4 @@ public class CurriculumsActivity extends AppCompatActivity {
             }
         });
     }
-
-
 }

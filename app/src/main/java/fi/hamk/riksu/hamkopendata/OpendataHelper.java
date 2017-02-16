@@ -53,8 +53,16 @@ public class OpendataHelper {
         return s.toString();*/
     }
 
-    public static void ShowAlertDialog(String message, String title, Context ctx) {
+    /**
+     *
+     * @param message Message
+     * @param title Title
+     * @param ctx Context
+     * @param strUseNegativeButton (Optional)Set button text to use negative button
+     */
+    public static void ShowAlertDialog(String message, String title, Context ctx, String... strUseNegativeButton) {
         String subject="", caption="";
+
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(ctx);
         // set title
 
@@ -69,19 +77,22 @@ public class OpendataHelper {
         alertDialogBuilder
                 .setMessage(subject)
                 .setCancelable(false)
-                .setPositiveButton("Yes",new DialogInterface.OnClickListener() {
+                .setPositiveButton("OK",new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog,int id) {
                         // if this button is clicked, close current activity
                         dialog.dismiss();
                         //MainActivity.this.finish();
                     }
-                })
-                .setNegativeButton("No",new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        // if this button is clicked, just close the dialog box and do nothing
-                        dialog.cancel();
-                    }
                 });
+
+        if(strUseNegativeButton.length > 0) {
+            alertDialogBuilder.setNegativeButton(strUseNegativeButton[0], new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    // if this button is clicked, just close the dialog box and do nothing
+                    dialog.cancel();
+                }
+            });
+        }
         // create alert dialog
         AlertDialog alertDialog = alertDialogBuilder.create();
         // show it
