@@ -31,7 +31,7 @@ public class ProgrammeActivity extends AppCompatActivity {
         // getting attached intent data
         //List<Relation> product = i.getParcelableArrayListExtra("product");
 
-        String url = "https://opendata.hamk.fi:8443/r1/reservation/building/";
+        //String url = "https://opendata.hamk.fi:8443/r1/reservation/building/";
 
         //itemsAdapter =new RelationAdapter(ProgrammeActivity.this, product);
         binding.lvProgramme.setAdapter(itemsAdapter);

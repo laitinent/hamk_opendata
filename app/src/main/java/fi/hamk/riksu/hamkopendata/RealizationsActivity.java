@@ -31,13 +31,9 @@ public class RealizationsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-
         super.onCreate(savedInstanceState);
         //setContentView(R.layout.activity_realizations);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_realizations);
-        /*final EditText txtProduct = (EditText) findViewById(R.id.etGroup);
-        final ListView listView = (ListView) findViewById(R.id.lvRealizations);
-*/
 
         binding.etGroup.setOnKeyListener(new View.OnKeyListener() {
             @Override
