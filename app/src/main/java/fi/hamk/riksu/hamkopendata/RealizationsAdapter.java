@@ -41,13 +41,16 @@ public class RealizationsAdapter extends ArrayAdapter<Realization>{
         // Lookup view for data population
         TextView tvName = (TextView) convertView.findViewById(R.id.tvName);
         TextView tvHome = (TextView) convertView.findViewById(R.id.tvHome);
-
+/*
         // Populate the data into the template view using the data object
         DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm");
         DateTimeFormatter outfmt = DateTimeFormat.forPattern("dd.MM.yy");
         DateTime startDate = fmt.parseDateTime(user.getStartDate());
 
         tvHome.setText(startDate.toString(outfmt));
+*/
+        tvHome.setText(OpendataHelper.formatDate(user.getStartDate()));
+
         String s="";
         try {
             String name = new String(user.getName().getBytes("ISO-8859-1"), "UTF-8");
@@ -60,7 +63,6 @@ public class RealizationsAdapter extends ArrayAdapter<Realization>{
         }
 
         tvName.setText(s);
-
 
         // Return the completed view to render on screen
         return convertView;

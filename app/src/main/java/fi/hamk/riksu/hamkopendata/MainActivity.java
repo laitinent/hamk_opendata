@@ -36,72 +36,48 @@ public class MainActivity extends AppCompatActivity {
         binding.textView.setText("V"+BuildConfig.VERSION_NAME);
 
         final GsonRequest jsObjRequest = new GsonRequest<>(url,Buildings.class, null,
-                new Response.Listener<Buildings>() {
-                    @Override
-                    public void onResponse(Buildings response) {
-
-                        itemsAdapter =new UsersAdapter(MainActivity.this, response.getResources());
-                        binding.listView.setAdapter(itemsAdapter);
-                    }
+                response -> {
+                    itemsAdapter =new UsersAdapter(MainActivity.this, response.getResources());
+                    binding.listView.setAdapter(itemsAdapter);
                 },
 
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        System.err.println(error.getMessage());
-                        Toast.makeText(MainActivity.this,"Virhe: "+error.getMessage(),Toast.LENGTH_LONG).show();
-                    }
+                error -> {
+                    System.err.println(error.getMessage());
+                    Toast.makeText(MainActivity.this,"Virhe: "+error.getMessage(),Toast.LENGTH_LONG).show();
                 });
 
 // Access the RequestQueue through your singleton class.
-        binding.button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                    MySingleton.getInstance(MainActivity.this).addToRequestQueue(jsObjRequest);
-            }
+        binding.button.setOnClickListener(view -> MySingleton.getInstance(MainActivity.this).addToRequestQueue(jsObjRequest));
+
+        binding.buttonRes.setOnClickListener(view -> {
+            Intent intent = new Intent(getApplicationContext(), ReservationsActivity.class);
+            intent.putExtra("url", OpendataHelper.RESERVATIONS_URL);//"https://opendata.hamk.fi:8443/r1/reservation/search");
+            startActivity(intent);
         });
 
-        binding.buttonRes.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), ReservationsActivity.class);
-                intent.putExtra("url", OpendataHelper.RESERVATIONS_URL);//"https://opendata.hamk.fi:8443/r1/reservation/search");
-                startActivity(intent);
-            }
+        binding.buttonReal.setOnClickListener(view -> {
+            Intent intent = new Intent(getApplicationContext(), RealizationsActivity.class);
+            startActivity(intent);
+        });
+        binding.buttonCur.setOnClickListener(view -> {
+            Intent intent = new Intent(getApplicationContext(), CurriculumsActivity.class);
+            startActivity(intent);
         });
 
-        binding.buttonReal.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), RealizationsActivity.class);
-                startActivity(intent);
-            }
-        });
-        binding.buttonCur.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), CurriculumsActivity.class);
-                startActivity(intent);
-            }
-        });
+        binding.listView.setOnItemClickListener((adapterView, view, i, l) -> {
+            Intent intent = new Intent(getApplicationContext(), SingleListItem.class);
+            // sending data to new activity
 
-        binding.listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Intent intent = new Intent(getApplicationContext(), SingleListItem.class);
-                // sending data to new activity
-
-                Resource listItem = (Resource) adapterView.getItemAtPosition(i);
-                intent.putExtra("product", listItem.getId());
-                startActivity(intent);
-                try {
-                    String name = new String(listItem.getName().getBytes("ISO-8859-1"), "UTF-8");
-                    Toast.makeText(getBaseContext(), name, Toast.LENGTH_LONG).show();
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
-
+            Resource listItem = (Resource) adapterView.getItemAtPosition(i);
+            intent.putExtra("product", listItem.getId());
+            startActivity(intent);
+            try {
+                String name = new String(listItem.getName().getBytes("ISO-8859-1"), "UTF-8");
+                Toast.makeText(getBaseContext(), name, Toast.LENGTH_LONG).show();
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
             }
+
         });
     }
 }

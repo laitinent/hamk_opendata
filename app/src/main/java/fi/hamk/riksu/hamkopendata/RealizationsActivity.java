@@ -53,21 +53,15 @@ public class RealizationsActivity extends AppCompatActivity {
                         jsonBody.put("studentGroups", groups);
 
                         jsObjRequest = new GsonPostRequest<>(url, Realizations.class, jsonBody,
-                                new Response.Listener<Realizations>() {
-                                    @Override
-                                    public void onResponse(Realizations response) {
-                                        //txtProduct.setText("Response: "+response.getResources().get(0).getName());
-                                        itemsAdapter = new RealizationsAdapter(RealizationsActivity.this, response.getRealizations());
-                                        binding.lvRealizations.setAdapter(itemsAdapter);
-                                    }
+                                response -> {
+                                    //txtProduct.setText("Response: "+response.getResources().get(0).getName());
+                                    itemsAdapter = new RealizationsAdapter(RealizationsActivity.this, response.getRealizations());
+                                    binding.lvRealizations.setAdapter(itemsAdapter);
                                 },
 
-                                new Response.ErrorListener() {
-                                    @Override
-                                    public void onErrorResponse(VolleyError error) {
-                                        System.err.println(error.getMessage());
-                                        Toast.makeText(RealizationsActivity.this, "Virhe: " + error.getMessage(), Toast.LENGTH_LONG).show();
-                                    }
+                                error -> {
+                                    System.err.println(error.getMessage());
+                                    Toast.makeText(RealizationsActivity.this, "Virhe: " + error.getMessage(), Toast.LENGTH_LONG).show();
                                 });
 
                     } catch (JSONException ex) {

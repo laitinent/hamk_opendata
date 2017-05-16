@@ -41,13 +41,16 @@ public class ReservationsAdapter extends ArrayAdapter<Reservation>{
         // Lookup view for data population
         TextView tvName = (TextView) convertView.findViewById(R.id.tvName);
         TextView tvHome = (TextView) convertView.findViewById(R.id.tvHome);
-
+/*
         // Populate the data into the template view using the data object
         DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm");
         DateTimeFormatter outfmt = DateTimeFormat.forPattern("dd.MM.yy' 'HH:mm");
         DateTime startDate = fmt.parseDateTime(user.getStartDate());
 
-        tvHome.setText(startDate.toString(outfmt));
+        tvHome.setText(startDate.toString(outfmt));*/
+
+        tvHome.setText(OpendataHelper.formatDate(user.getStartDate()));
+
         try {
             String subject = new String(user.getSubject().getBytes("ISO-8859-1"), "UTF-8");
             tvName.setText(subject.length()>30? subject.substring(0,30) : subject);

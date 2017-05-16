@@ -14,6 +14,8 @@ import com.android.volley.VolleyError;
 
 import fi.hamk.riksu.hamkopendata.databinding.ActivitySingleListItemBinding;
 
+import static fi.hamk.riksu.hamkopendata.OpendataHelper.RESERVATIONS_ALL_URL;
+
 public class SingleListItem extends AppCompatActivity {
     UsersAdapter itemsAdapter;
     ActivitySingleListItemBinding binding;
@@ -22,9 +24,6 @@ public class SingleListItem extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         //setContentView(R.layout.activity_single_list_item);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_single_list_item);
-        //final TextView txtProduct = (TextView) findViewById(R.id.textView2);
-        //final ListView listView = (ListView)findViewById(R.id.lvDetails);
-
 
         Intent i = getIntent();
         // getting attached intent data
@@ -32,26 +31,17 @@ public class SingleListItem extends AppCompatActivity {
         // displaying selected product name
         binding.textView2.setText(product);
 
-        String url = "https://opendata.hamk.fi:8443/r1/reservation/building/";
+        //String url = "https://opendata.hamk.fi:8443/r1/reservation/building/";
 
-
-        final GsonRequest jsObjRequest = new GsonRequest<>(url+product, Buildings.class, null,
-                new Response.Listener<Buildings>() {
-                    @Override
-                    public void onResponse(Buildings response) {
-                        //txtProduct.setText("Response: "+response.getResources().get(0).getName());
-                        itemsAdapter =new UsersAdapter(SingleListItem.this, response.getResources());
-                        binding.lvDetails.setAdapter(itemsAdapter);
-                    }
+        final GsonRequest jsObjRequest = new GsonRequest<>(RESERVATIONS_ALL_URL+"/"+product, Buildings.class, null,
+                response -> {
+                    //txtProduct.setText("Response: "+response.getResources().get(0).getName());
+                    itemsAdapter =new UsersAdapter(SingleListItem.this, response.getResources());
+                    binding.lvDetails.setAdapter(itemsAdapter);
                 },
 
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        System.err.println(error.getMessage());
-                        Toast.makeText(SingleListItem.this,"Virhe: "+error.getMessage(),Toast.LENGTH_LONG).show();
-                    }
-                });
+                error ->  OpendataHelper.printToastErr(SingleListItem.this,error.getMessage())
+                );
 
                 MySingleton.getInstance(SingleListItem.this).addToRequestQueue(jsObjRequest);
     }

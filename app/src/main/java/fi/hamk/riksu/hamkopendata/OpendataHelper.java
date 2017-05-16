@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.app.AlertDialog;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Toast;
 
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -54,6 +55,31 @@ public class OpendataHelper {
     }
 
     /**
+     * format date from yyyy-MM-dd'T'HH:mm to dd.MM.yy
+     * @param preformatted date string in input format
+     * @return date string in output format
+     */
+    public static String formatDate(String preformatted)
+    {
+        // Populate the data into the template view using the data object
+        DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss");// :ss lisätty
+        DateTimeFormatter outfmt = DateTimeFormat.forPattern("dd.MM.yy");
+        DateTime startDate = fmt.parseDateTime(preformatted);//user.getStartDate());
+
+        return startDate.toString(outfmt);//tvHome.setText(startDate.toString(outfmt));
+    }
+
+    /**
+     * Print message in as toast and console
+     * @param me Context e.g. activity
+     * @param msg Message to print
+     */
+    public static void printToastErr(Context me,String msg)
+    {
+        System.err.println(msg);
+        Toast.makeText(me, "Virhe: " + msg, Toast.LENGTH_LONG).show();
+    }
+    /**
      *
      * @param message Message
      * @param title Title
@@ -77,20 +103,16 @@ public class OpendataHelper {
         alertDialogBuilder
                 .setMessage(subject)
                 .setCancelable(false)
-                .setPositiveButton("OK",new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog,int id) {
-                        // if this button is clicked, close current activity
-                        dialog.dismiss();
-                        //MainActivity.this.finish();
-                    }
+                .setPositiveButton("OK", (dialog, id) -> {
+                    // if this button is clicked, close current activity
+                    dialog.dismiss();
+                    //MainActivity.this.finish();
                 });
 
         if(strUseNegativeButton.length > 0) {
-            alertDialogBuilder.setNegativeButton(strUseNegativeButton[0], new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    // if this button is clicked, just close the dialog box and do nothing
-                    dialog.cancel();
-                }
+            alertDialogBuilder.setNegativeButton(strUseNegativeButton[0], (dialog, id) -> {
+                // if this button is clicked, just close the dialog box and do nothing
+                dialog.cancel();
             });
         }
         // create alert dialog

@@ -3,7 +3,7 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 25
 
-    buildToolsVersion "25.0.2"
+    buildToolsVersion "25.0.3"
     defaultConfig {
         applicationId "fi.hamk.riksu.hamkopendata"
         minSdkVersion 21
@@ -13,6 +13,12 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
     }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -24,7 +30,7 @@ android {
     }
 }
 ext {
-    supportLibVersion = '25.2.0'  // variable that can be referenced to keep support libs consistent
+    supportLibVersion = '25.3.1'  // variable that can be referenced to keep support libs consistent
 }
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
@@ -32,10 +38,10 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
 
-    testCompile 'junit:junit:4.12'
+    testCompile 'org.junit.jupiter:junit-jupiter-api:5.0.0-M2'
     compile 'com.android.volley:volley:1.0.0'
-    compile 'com.google.code.gson:gson:2.7'
-    compile 'joda-time:joda-time:2.9.7'
+    compile 'com.google.code.gson:gson:2.8.0'
+    compile 'joda-time:joda-time:2.9.9'
     compile "com.android.support:appcompat-v7:${supportLibVersion}"
     compile "com.android.support:design:${supportLibVersion}"
 

@@ -37,12 +37,9 @@ public class CurriculumsActivity extends AppCompatActivity {
 
     String latestName = "";
 
-    Response.ErrorListener rError_func = new Response.ErrorListener() {
-        @Override
-        public void onErrorResponse(VolleyError error) {
-            System.err.println(error.getMessage());
-            Toast.makeText(CurriculumsActivity.this, "Virhe: " + error.getMessage(), Toast.LENGTH_LONG).show();
-        }
+    Response.ErrorListener rError_func = error -> {
+        System.err.println(error.getMessage());
+        Toast.makeText(CurriculumsActivity.this, "Virhe: " + error.getMessage(), Toast.LENGTH_LONG).show();
     };
 
     @Override
@@ -60,37 +57,34 @@ public class CurriculumsActivity extends AppCompatActivity {
         //JSONArray jsonArray = new JSONArray(); jsonArray.put("INTIA15A");
 
         jsObjRequest = new GsonPostRequest<>(url, Curriculums.class, jsonBody,
-                new Response.Listener<Curriculums>() {
-                    @Override
-                    public void onResponse(Curriculums response) {
-                        //txtProduct.setText("Response: "+response.getResources().get(0).getName());
-                        // was CurriculumsAdapter
-                        if (response.getProgrammes() != null && response.getProgrammes().get(0).getStructureViews().size() > 0) {
-                            lsAllRelations = response.getProgrammes().get(0).getStructureViews().get(0).getRelations();
-                            lsRelations.clear();
-                            if (binding.checkBox.isChecked() == true || latestName.compareTo("") != 0) {
-                                String strCompare = "";
-                                for (Relation r : lsAllRelations) {
-
-                                    if (r.getLearningUnit().getType().compareTo("STUDY_MODULE") == 0) {
-                                        lsRelations.add(r);
-                                        strCompare = r.getLearningUnit().getName();
-                                        System.out.println("CM1 " + strCompare);
-                                    }
-                                    // show on list also other types after clicked module name
-
-                                    if (strCompare.compareTo(latestName) == 0 && r.getLearningUnit().getType().compareTo("STUDY_MODULE") != 0) {
-                                        lsRelations.add(r);
-                                        System.out.println("CM2 " + strCompare);
-                                    }
+                response -> {
+                    //txtProduct.setText("Response: "+response.getResources().get(0).getName());
+                    // was CurriculumsAdapter
+                    if (response.getProgrammes() != null && response.getProgrammes().get(0).getStructureViews().size() > 0) {
+                        lsAllRelations = response.getProgrammes().get(0).getStructureViews().get(0).getRelations();
+                        lsRelations.clear();
+                        if (binding.checkBox.isChecked() == true || latestName.compareTo("") != 0) {
+                            String strCompare = "";
+                            for (Relation r : lsAllRelations) {
+                                String myType=r.getLearningUnit().getType();
+                                if (myType.compareTo("STUDY_MODULE") == 0) {
+                                    lsRelations.add(r);
+                                    strCompare = r.getLearningUnit().getName();
+                                    System.out.println("CM1 " + strCompare);
                                 }
-                            } else {
-                                lsRelations.addAll(lsAllRelations);
+                                // show on list also other types after clicked module name
+
+                                if (strCompare.compareTo(latestName) == 0 && myType.compareTo("STUDY_MODULE") != 0) {
+                                    lsRelations.add(r);
+                                    System.out.println("CM2 " + strCompare);
+                                }
                             }
-                            latestName = "";
-                            itemsAdapter = new RelationAdapter(CurriculumsActivity.this, lsRelations, false);
-                            binding.lvCurriculums.setAdapter(itemsAdapter);
+                        } else {
+                            lsRelations.addAll(lsAllRelations);
                         }
+                        latestName = "";
+                        itemsAdapter = new RelationAdapter(CurriculumsActivity.this, lsRelations, false);
+                        binding.lvCurriculums.setAdapter(itemsAdapter);
                     }
                 },
                 rError_func
@@ -102,28 +96,20 @@ public class CurriculumsActivity extends AppCompatActivity {
         binding.lvCurriculums.setOnItemClickListener(listClickListener);
 
         // normaali haku, opiskelijaryhmätunnus editText:stä
-        binding.button2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                try {
-                    //jsonBody.put("codes",jsonArray);// "[INTIA15A]");
-                    jsonBody.put("name", binding.editText.getText().toString());
-                    jsObjRequest.setBody(jsonBody);
-                } catch (JSONException ex) {
-                    System.err.println(ex.getMessage());
-                }
-                MySingleton.getInstance(CurriculumsActivity.this).addToRequestQueue(jsObjRequest);
-                hideKeyboardFrom(getApplicationContext(), binding.editText);
+        binding.button2.setOnClickListener(view -> {
+            try {
+                //jsonBody.put("codes",jsonArray);// "[INTIA15A]");
+                jsonBody.put("name", binding.editText.getText().toString());
+                jsObjRequest.setBody(jsonBody);
+            } catch (JSONException ex) {
+                System.err.println(ex.getMessage());
             }
+            MySingleton.getInstance(CurriculumsActivity.this).addToRequestQueue(jsObjRequest);
+            hideKeyboardFrom(getApplicationContext(), binding.editText);
         });
 
         // hae uudelleen - näyttää vain moduulit, jos rasti ruudussa
-        binding.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                MySingleton.getInstance(CurriculumsActivity.this).addToRequestQueue(jsObjRequest);
-            }
-        });
+        binding.checkBox.setOnCheckedChangeListener((compoundButton, b) -> MySingleton.getInstance(CurriculumsActivity.this).addToRequestQueue(jsObjRequest));
     }
 
     AdapterView.OnItemClickListener listClickListener = new AdapterView.OnItemClickListener() {
@@ -157,25 +143,21 @@ public class CurriculumsActivity extends AppCompatActivity {
                     ((Relation) adapterView.getItemAtPosition(i + j + 1)).getLearningUnit().getId();//
             System.out.println(listItem.getId() + ", " + lUnit.getId() + " index=" + (i + j + 1) + "/i=" + i);
             jsObjRequest2 = new GsonRequest<>(url2, CourseUnitSearch.class, null,
-                    new Response.Listener<CourseUnitSearch>() {
-                        @Override
-                        public void onResponse(CourseUnitSearch response) {
-
-                            //if (lUnit.getType().compareTo("COURSE_UNIT") == 0)
-                            {
-                                try {
-                                    ShowAlertDialog(response.getCourseUnits().get(0).getObjective(),
-                                            response.getCourseUnits().get(0).getName(), CurriculumsActivity.this);
-                                } catch (NullPointerException ex) {
-                                    System.err.println(ex.getMessage());
-                                }
-                                    /*
-                                        Intent intent = new Intent(getApplicationContext(), CourseUnitSearch.class);
-                                        // sending data to new activity
-                                        intent.putExtra("course",url);
-                                        startActivity(intent);
-                                    */
+                    response -> {
+                        //if (lUnit.getType().compareTo("COURSE_UNIT") == 0)
+                        {
+                            try {
+                                ShowAlertDialog(response.getCourseUnits().get(0).getObjective(),
+                                        response.getCourseUnits().get(0).getName(), CurriculumsActivity.this);
+                            } catch (NullPointerException ex) {
+                                System.err.println(ex.getMessage());
                             }
+                                /*
+                                    Intent intent = new Intent(getApplicationContext(), CourseUnitSearch.class);
+                                    // sending data to new activity
+                                    intent.putExtra("course",url);
+                                    startActivity(intent);
+                                */
                         }
                     },
                     rError_func

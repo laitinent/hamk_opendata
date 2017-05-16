@@ -42,51 +42,43 @@ public class ReservationsActivity extends AppCompatActivity {
         // getting attached intent data
         final String url = i.getStringExtra("url");
 //
-        binding.etReservation.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View view, int keyCode, KeyEvent keyEvent) {
-                if (keyCode == EditorInfo.IME_ACTION_SEARCH ||
-                        keyCode == EditorInfo.IME_ACTION_DONE ||
-                        keyEvent.getAction() == KeyEvent.ACTION_DOWN &&
-                        keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+        binding.etReservation.setOnKeyListener((view, keyCode, keyEvent) -> {
+            if (keyCode == EditorInfo.IME_ACTION_SEARCH ||
+                    keyCode == EditorInfo.IME_ACTION_DONE ||
+                    keyEvent.getAction() == KeyEvent.ACTION_DOWN &&
+                    keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
 
-                    //String url = "https://opendata.hamk.fi:8443/r1/reservation/search";
-                    groups = new JSONArray();
-                    groups.put(binding.etReservation.getText().toString());
-                    try {
-                        // Search for given student group current week schedule
-                        jsonBody = new JSONObject();
-                        jsonBody.put("startDate", OpendataHelper.getCurrentDateString(0));
-                        jsonBody.put("endDate", OpendataHelper.getCurrentDateString(7));
-                        jsonBody.put("studentGroup", groups);
-                    } catch (JSONException ex) {
-                        System.err.println(ex.getMessage());
-                    }
-
-                    final GsonPostRequest jsObjRequest = new GsonPostRequest<>(url, Reservations.class, jsonBody,
-                            new Response.Listener<Reservations>() {
-                                @Override
-                                public void onResponse(Reservations response) {
-                                    //txtProduct.setText("Response: "+response.getResources().get(0).getName());
-                                    itemsAdapter = new ReservationsAdapter(me, response.getReservations());
-                                    binding.lvReservations.setAdapter(itemsAdapter);
-                                }
-                            },
-
-                            new Response.ErrorListener() {
-                                @Override
-                                public void onErrorResponse(VolleyError error) {
-                                    System.err.println(error.getMessage());
-                                    Toast.makeText(me, "Virhe: " + error.getMessage(), Toast.LENGTH_LONG).show();
-                                }
-                            });
-
-                    MySingleton.getInstance(me).addToRequestQueue(jsObjRequest);
-                    binding.etReservation.clearFocus();
-                    return true;
+                //String url = "https://opendata.hamk.fi:8443/r1/reservation/search";
+                groups = new JSONArray();
+                groups.put(binding.etReservation.getText().toString());
+                try {
+                    // Search for given student group current week schedule
+                    jsonBody = new JSONObject();
+                    jsonBody.put("startDate", OpendataHelper.getCurrentDateString(0));
+                    jsonBody.put("endDate", OpendataHelper.getCurrentDateString(7));
+                    jsonBody.put("studentGroup", groups);
+                } catch (JSONException ex) {
+                    System.err.println(ex.getMessage());
                 }
-                return false;
+
+                final GsonPostRequest jsObjRequest = new GsonPostRequest<>(url, Reservations.class, jsonBody,
+                        response -> {
+                            //txtProduct.setText("Response: "+response.getResources().get(0).getName());
+                            itemsAdapter = new ReservationsAdapter(me, response.getReservations());
+                            binding.lvReservations.setAdapter(itemsAdapter);
+                        },
+
+                        error -> OpendataHelper.printToastErr(me,error.getMessage())
+                        );
+                            /*)
+                            System.err.println(error.getMessage());
+                            Toast.makeText(me, "Virhe: " + error.getMessage(), Toast.LENGTH_LONG).show();*/
+
+                MySingleton.getInstance(me).addToRequestQueue(jsObjRequest);
+                binding.etReservation.clearFocus();
+                return true;
             }
+            return false;
         });
     }
 }
