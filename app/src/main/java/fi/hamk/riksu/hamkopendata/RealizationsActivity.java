@@ -35,44 +35,41 @@ public class RealizationsActivity extends AppCompatActivity {
         //setContentView(R.layout.activity_realizations);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_realizations);
 
-        binding.etGroup.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View view, int keyCode, KeyEvent keyEvent) {
-                if(keyCode == EditorInfo.IME_ACTION_SEARCH ||
-                        keyCode == EditorInfo.IME_ACTION_DONE ||
-                        keyEvent.getAction() == KeyEvent.ACTION_DOWN &&
-                                keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER)
-                {
-                    groups = new JSONArray();
-                    groups.put(binding.etGroup.getText().toString());
-                    try {
-                        // Search criteria: starting from today
-                        jsonBody = new JSONObject();
-                        jsonBody.put("startDate", OpendataHelper.getCurrentDateString(0));
-                        //jsonBody.put("endDate", OpendataHelper.getCurrentDateString(0));
-                        jsonBody.put("studentGroups", groups);
+        binding.etGroup.setOnKeyListener((view, keyCode, keyEvent) -> {
+            if(keyCode == EditorInfo.IME_ACTION_SEARCH ||
+                    keyCode == EditorInfo.IME_ACTION_DONE ||
+                    keyEvent.getAction() == KeyEvent.ACTION_DOWN &&
+                            keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER)
+            {
+                groups = new JSONArray();
+                groups.put(binding.etGroup.getText().toString());
+                try {
+                    // Search criteria: starting from today
+                    jsonBody = new JSONObject();
+                    jsonBody.put("startDate", OpendataHelper.getCurrentDateString(0));
+                    //jsonBody.put("endDate", OpendataHelper.getCurrentDateString(0));
+                    jsonBody.put("studentGroups", groups);
 
-                        jsObjRequest = new GsonPostRequest<>(url, Realizations.class, jsonBody,
-                                response -> {
-                                    //txtProduct.setText("Response: "+response.getResources().get(0).getName());
-                                    itemsAdapter = new RealizationsAdapter(RealizationsActivity.this, response.getRealizations());
-                                    binding.lvRealizations.setAdapter(itemsAdapter);
-                                },
+                    jsObjRequest = new GsonPostRequest<>(url, Realizations.class, jsonBody,
+                            response -> {
+                                //txtProduct.setText("Response: "+response.getResources().get(0).getName());
+                                itemsAdapter = new RealizationsAdapter(RealizationsActivity.this, response.getRealizations());
+                                binding.lvRealizations.setAdapter(itemsAdapter);
+                            },
 
-                                error -> {
-                                    System.err.println(error.getMessage());
-                                    Toast.makeText(RealizationsActivity.this, "Virhe: " + error.getMessage(), Toast.LENGTH_LONG).show();
-                                });
+                            error -> {
+                                System.err.println(error.getMessage());
+                                Toast.makeText(RealizationsActivity.this, "Virhe: " + error.getMessage(), Toast.LENGTH_LONG).show();
+                            });
 
-                    } catch (JSONException ex) {
-                        System.err.println(ex.getMessage());
-                    }
-                    MySingleton.getInstance(RealizationsActivity.this).addToRequestQueue(jsObjRequest);
-                    binding.etGroup.clearFocus();
-                    return true;
+                } catch (JSONException ex) {
+                    System.err.println(ex.getMessage());
                 }
-                return false;
+                MySingleton.getInstance(RealizationsActivity.this).addToRequestQueue(jsObjRequest);
+                binding.etGroup.clearFocus();
+                return true;
             }
+            return false;
         });
     }
 }
