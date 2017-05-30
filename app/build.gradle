@@ -6,7 +6,7 @@ android {
     defaultConfig {
         applicationId "fi.hamk.riksu.hamkopendata"
         minSdkVersion 21
-        targetSdkVersion 'O'
+        targetSdkVersion 26
         versionCode 17
         versionName "1.7"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -44,5 +44,5 @@ dependencies {
     compile "com.android.support:appcompat-v7:${supportLibVersion}"
     compile "com.android.support:design:${supportLibVersion}"
 
-    compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    compile 'com.android.support.constraint:constraint-layout:1.1.0-beta1'
 }
