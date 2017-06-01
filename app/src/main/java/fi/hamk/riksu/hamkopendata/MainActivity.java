@@ -2,20 +2,9 @@ package fi.hamk.riksu.hamkopendata;
 
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
-import android.graphics.Color;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.ListView;
+import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-
 
 import java.io.UnsupportedEncodingException;
 
@@ -77,7 +66,6 @@ public class MainActivity extends AppCompatActivity {
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
-
         });
     }
 }

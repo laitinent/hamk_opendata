@@ -26,13 +26,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-
-
-
 /**
  * Created by tlaitinen on 2.12.2016.
  */
-
 
 public class GsonPostRequest<T> extends Request<T> {
     private final Gson gson = new Gson();
@@ -41,7 +37,6 @@ public class GsonPostRequest<T> extends Request<T> {
     private final Response.Listener<T> listener;
     //JSONObject jsonBody = new JSONObject();
     String mRequestBody;
-
 
     /**
      * Make a POST request and return a parsed object from JSON.
@@ -117,9 +112,7 @@ public class GsonPostRequest<T> extends Request<T> {
             return Response.success(
                     gson.fromJson(json, clazz),
                     HttpHeaderParser.parseCacheHeaders(response));
-        } catch (UnsupportedEncodingException e) {
-            return Response.error(new ParseError(e));
-        } catch (JsonSyntaxException e) {
+        } catch (UnsupportedEncodingException | JsonSyntaxException e) {
             System.err.println(e.getMessage());
             return Response.error(new ParseError(e));
         }

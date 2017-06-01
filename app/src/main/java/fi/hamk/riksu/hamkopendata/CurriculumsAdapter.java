@@ -35,8 +35,8 @@ public class CurriculumsAdapter extends ArrayAdapter<Programme>{
         }
 
         // Lookup view for data population
-        TextView tvName = (TextView) convertView.findViewById(R.id.tvName);
-        TextView tvHome = (TextView) convertView.findViewById(R.id.tvHome);
+        TextView tvName = convertView.findViewById(R.id.tvName);
+        TextView tvHome = convertView.findViewById(R.id.tvHome);
 
         // Populate the data into the template view using the data object
         String name = null;
